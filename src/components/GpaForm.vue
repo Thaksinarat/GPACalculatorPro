@@ -28,7 +28,7 @@
           hide-bottom-space
           :rules="[
             (val) => (val !== null && val !== '') || 'กรุณากรอกคะแนน',
-            (val) => (val > 0 && val <= 100) || 'คะแนนต้องอยู่ระหว่าง 0-100',
+            (val) => (val >= 0 && val <= 100) || 'คะแนนต้องอยู่ระหว่าง 0-100',
           ]"
         ></q-input>
         <q-input v-model="grade" outlined label="เกรด" disable class="bg-blue-2"></q-input>

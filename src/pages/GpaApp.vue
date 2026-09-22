@@ -14,7 +14,12 @@
     <GpaForm @add-subject="addNewSubject"></GpaForm>
 
     <!-- รายการรายวิชา -->
-    <subjectList @delete-subject="deleteSubject" @delete-all-subject="deleteAllSubject" :items="subjects" :isLoading="isLoading"></subjectList>
+    <subjectList
+      @delete-subject="deleteSubject"
+      @delete-all-subject="deleteAllSubject"
+      :items="subjects"
+      :isLoading="isLoading"
+    ></subjectList>
 
     <!-- การ์ดแสดงผลการเรียนเฉลี่ย -->
     <summaryCard :items="subjects" :is-loading="isLoading"></summaryCard>
@@ -25,26 +30,28 @@
 import GpaForm from '@/components/GpaForm.vue'
 import subjectList from '@/components/subjectList.vue'
 import summaryCard from '@/components/summaryCard.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 // ข้อมูลรายวิชา
 const subjects = ref([])
-const isLoading = ref(false)
+const isLoading = ref(true)
+
+// หน่วงการโหลด
+onMounted(() =>{
+  setTimeout(()=>{
+    isLoading.value = false
+  }, 2000)
+})
 
 // ฟังก์ชันเพิ่ม
 const addNewSubject = (newSubject) => {
   subjects.value.push(newSubject)
-
-  isLoading.value = true
-  setTimeout(() => {
-    isLoading.value = false
-    console.log('💚 Add!')
-  }, 2000)
+  console.log('💚 Add!')
 }
 
 // ฟังก์ชันลบรายวิชา
-const deleteSubject = (row) => {
-  const index = subjects.value.findIndex((item) => item.name == row.name)
+const deleteSubject = (subject) => {
+  const index = subjects.value.findIndex((item) => item.name == subject.name)
   subjects.value.splice(index, 1)
 
   console.log('⛔ Remove!')

@@ -1,7 +1,7 @@
 <template>
-  <div v-if="isLoading" class="column items-center justify-center q-pa-xl">
+  <div v-if="isLoading == true" class="column items-center justify-center q-pa-xl">
     <!-- แสดง Loading -->
-    <q-spinner-gears class="q-mb-md" color="primary" size="3rem" :thickness="5" />
+    <q-spinner-puff class="q-mb-md" color="primary" size="48px" :thickness="5" />
     <p class="text-grey">กำลังดึงข้อมูล...</p>
   </div>
 
@@ -19,7 +19,7 @@
         <!-- แสดงรายการรายวิชาทั้งหมด -->
         <div>
           <!-- list -->
-          <q-list bordered separator>
+          <q-list bordered separator class="bg-white shadow-2">
             <!-- แต่ละรายวิชา -->
             <q-item
               class="flex justify-between"
@@ -60,10 +60,10 @@
               <q-item-section side>
                 <div class="row q-gutter-lg">
                   <p>
-                    GPA: <span>{{ subject.grade_score }}</span>
+                    GP: <span>{{ subject.grade_score.toFixed(1) }}</span>
                   </p>
 
-                  <p @click="deleteSubject"><q-icon class="btn" name="delete_outline" color="red-5" size="20px"/></p>
+                  <p @click="deleteSubject(subject)"><q-icon class="btn" name="delete_outline" color="red-5" size="20px"/></p>
                 </div>
               </q-item-section>
             </q-item>
@@ -116,8 +116,8 @@ const emit = defineEmits(['delete-subject', 'delete-all-subject'])
 console.log(props)
 
 // ลบรายวิชา
-const deleteSubject = (row) => {
-  emit('delete-subject', row)
+const deleteSubject = (s) => {
+  emit('delete-subject', s)
 }
 
 // ลบทั้งหมด
