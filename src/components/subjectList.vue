@@ -99,7 +99,7 @@
 </style>
 
 <script setup>
-const props = defineProps({
+defineProps({
   items: {
     type: Array,
     required: true,
@@ -112,8 +112,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['delete-subject', 'delete-all-subject'])
-
-console.log(props)
 
 // ลบรายวิชา
 const deleteSubject = (s) => {
