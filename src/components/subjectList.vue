@@ -99,27 +99,23 @@
 </style>
 
 <script setup>
-defineProps({
-  items: {
-    type: Array,
-    required: true,
-    default: () => [],
-  },
-  isLoading: {
-    type: Boolean,
-    default: false,
-  },
-})
+import { useSubjectStore } from '@/stores/subjectStore'
+import { computed } from 'vue';
 
-const emit = defineEmits(['delete-subject', 'delete-all-subject'])
+const subjectStore = useSubjectStore()
+
+// ตัวโหลด
+const isLoading = computed(() => subjectStore.isLoading)
+// รายวิชา
+const items = computed(() => subjectStore.allSubjects)
 
 // ลบรายวิชา
 const deleteSubject = (s) => {
-  emit('delete-subject', s)
+  subjectStore.deleteSubject(s)
 }
 
 // ลบทั้งหมด
 const deleteAllSubject = () => {
-  emit('delete-all-subject')
+  subjectStore.deleteAllSubject()
 }
 </script>

@@ -1,8 +1,12 @@
 <!-- หน้าหลัก -->
 <template>
   <q-page padding>
+    <!-- ปุ่ม logout -->
+    <div>
+      <q-btn color="negative" icon="logout" label="Log out" @click="handleLogout()" />
+    </div>
     <!-- ชื่อเว็บและไอคอน -->
-    <div class="column items-center">
+    <div class="column q-mt-md items-center">
       <q-icon name="calculate" color="blue-7" size="96px" class="q-mb-md" />
 
       <p class="text-h4 text-bold">GPA Calculator Pro</p>
@@ -11,13 +15,13 @@
     </div>
 
     <!-- ฟอร์ม -->
-    <GpaForm @add-subject="addNewSubject"></GpaForm>
+    <GpaForm @add-subject="subjectStore.addNewSubject"></GpaForm>
 
     <!-- รายการรายวิชา -->
     <subjectList
-      @delete-subject="deleteSubject"
-      @delete-all-subject="deleteAllSubject"
-      :items="subjects"
+      @delete-subject="subjectStore.deleteSubject"
+      @delete-all-subject="subjectStore.deleteAllSubject"
+      :items="subjectStore.allSubjects"
       :isLoading="isLoading"
     ></subjectList>
 
@@ -30,37 +34,18 @@
 import GpaForm from '@/components/GpaForm.vue'
 import subjectList from '@/components/subjectList.vue'
 import summaryCard from '@/components/summaryCard.vue'
-import { onMounted, ref } from 'vue'
+import { useSubjectStore } from '@/stores/subjectStore'
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
 
-// ข้อมูลรายวิชา
-const subjects = ref([])
-const isLoading = ref(true)
+const authStore = useAuthStore()
+const subjectStore = useSubjectStore()
+const router = useRouter()
 
-// หน่วงการโหลด
-onMounted(() =>{
-  setTimeout(()=>{
-    isLoading.value = false
-  }, 2000)
-})
-
-// ฟังก์ชันเพิ่ม
-const addNewSubject = (newSubject) => {
-  subjects.value.push(newSubject)
-  console.log('💚 Add!')
-}
-
-// ฟังก์ชันลบรายวิชา
-const deleteSubject = (subject) => {
-  const index = subjects.value.findIndex((item) => item.name == subject.name)
-  subjects.value.splice(index, 1)
-
-  console.log('⛔ Remove!')
-}
-
-// ฟังก์ชันลบทั้งหมด
-const deleteAllSubject = () => {
-  subjects.value = []
-
-  console.log('⛔⛔ Remove all!')
+// function Logout
+const handleLogout = () => {
+  authStore.logout()
+  router.push('/login')
+  
 }
 </script>

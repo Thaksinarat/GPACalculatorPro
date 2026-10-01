@@ -24,28 +24,15 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { useSubjectStore } from '@/stores/subjectStore';
+import { computed } from 'vue';
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true,
-    default: () => [],
-  },
-  isLoading: {
-    type: Boolean,
-    default: false,
-  },
-})
+const subjectStore = useSubjectStore()
 
-// รวมหน่วยกิตสะสม
-const sumCredit = computed(() => {
-  return props.items.reduce((sum, item) => sum + Number(item.credit), 0)
-})
-
+// รายวิชา
+const items = computed(() => subjectStore.allSubjects)
+// จำนวนหน่วยกิตสะสม
+const sumCredit = computed(() => subjectStore.sumCredit)
 // ค่า GPA
-const gpa = computed(() => {
-  const sumGradePoint = props.items.reduce((sum, item) => sum + Number(item.grade_point), 0)
-  return (sumGradePoint / sumCredit.value).toFixed(2)
-})
+const gpa = computed(() => subjectStore.gpa)
 </script>

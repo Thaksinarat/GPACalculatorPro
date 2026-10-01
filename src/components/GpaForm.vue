@@ -1,6 +1,6 @@
 <template>
   <q-card class="q-pa-md">
-    <q-form @submit="addSubject">
+    <q-form ref="form_ref" @submit="addSubject" @reset="onReset">
       <!-- input -->
       <div class="flex justify-center q-gutter-md">
         <q-input
@@ -48,86 +48,64 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-// ประกาศตัวแปรเก็บข้อมูลในฟอร์ม
-const name = ref()
+import { ref, computed } from 'vue'
+import { useSubjectStore } from '@/stores/subjectStore'
+
+const subjectStore = useSubjectStore()
+
+const form_ref = ref(null)
+const name = ref('')
 const credit = ref(1)
 const score = ref(0)
-const grade = ref()
-const grade_score = ref()
-const grade_point = ref()
 
-// event
-const emit = defineEmits(['add-subject'])
+// คำนวณเกรดอัตโนมัติจากคะแนน
+const getGrade = computed(() => {
+  const s = Number(score.value)
 
-// watcher
-watch([credit, score], ([newCredit, newScore]) => {
-  if (
-    newCredit !== '' &&
-    newCredit !== null &&
-    newCredit !== undefined &&
-    newScore !== '' &&
-    newScore !== null &&
-    newScore !== undefined
-  ) {
-    // คำนวณเกรด
-    calculateGrade(score)
+  if (s >= 80) {
+    return { grade: 'A', gradeScore: 4.0 }
+  } else if (s >= 75) {
+    return { grade: 'B+', grade_score: 3.5 }
+  } else if (s >= 70) {
+    return { grade: 'B', grade_score: 3.0 }
+  } else if (s >= 65) {
+    return { grade: 'c+', grade_score: 2.5 }
+  } else if (s >= 60) {
+    return { grade: 'C', gradeScore: 2.0 }
+  } else if (s >= 55) {
+    return { grade: 'D+', gradeScore: 1.5 }
+  } else if (s >= 50) {
+    return { grade: 'D', gradeScore: 1.0 }
+  } else {
+    return { grade: 'E', gradeScore: 0 }
   }
 })
 
+// ค่าเกรด
+const grade = computed(() => getGrade.value.grade)
+
 // เพิ่มรายวิชา
 const addSubject = () => {
-  // คำนวณค่า grade_point
-  grade_point.value = grade_score.value * credit.value 
+  const gradeScore = getGrade.value.gradeScore
 
-  console.log(name.value, credit.value, score.value, grade.value, grade_score.value, grade_point.value)
-  const newSubject = {
+  subjectStore.addNewSubject({
+    id: Date.now(),
     name: name.value,
     credit: credit.value,
     score: score.value,
-    grade: grade.value,
-    grade_score: grade_score.value,
-    grade_point: grade_point.value,
-  }
-  // event เพิ่มรายวิชา
-  emit('add-subject', newSubject)
+    grade: getGrade.value.grade,
+    grade_score: gradeScore,
+    grade_point: gradeScore * credit.value,
+  })
 
-  // reset ค่า
-  name.value = ' '
-  credit.value = 1
-  score.value = 0
-  grade.value = ''
-  grade_score.value = ''
-  grade_point.value = 0
-
+  // บอกฟอร์มให้ล้างค่า
+  form_ref.value.reset()
 }
 
-// คำนวณเกรด
-const calculateGrade = (score) => {
-  if (score.value >= 80) {
-    grade.value = 'A'
-    grade_score.value = 4.0
-  } else if (score.value >= 75) {
-    grade.value = 'B+'
-    grade_score.value = 3.5
-  } else if (score.value >= 70) {
-    grade.value = 'B'
-    grade_score.value = 3.0
-  } else if (score.value >= 65) {
-    grade.value = 'C+'
-    grade_score.value = 2.5
-  } else if (score.value >= 60) {
-    grade.value = 'C'
-    grade_score.value = 2.0
-  } else if (score.value >= 55) {
-    grade.value = 'D+'
-    grade_score.value = 1.5
-  } else if (score.value >= 50) {
-    grade.value = 'D'
-    grade_score.value = 1.0
-  } else {
-    grade.value = 'E'
-    grade_score.value = 0
-  }
+// ล้างค่า
+const onReset = () => {
+  name.value = ''
+  credit.value = 1
+  score.value = 0
 }
 </script>
